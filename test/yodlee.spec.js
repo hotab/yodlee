@@ -1077,7 +1077,7 @@ describe('yodlee node module', function() {
 
         it('should return an error when credentials length does not match login form length', function(){
 
-            return yodlee.addSiteAccounts(3970, ["username"]).should.be.rejectedWith("You have not provided enough login credentials. This site expects 2 login parameters.");
+            return yodlee.addSiteAccounts(3970, ["username"]).should.be.rejected;
 
         });
 
