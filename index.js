@@ -612,37 +612,34 @@ Yodlee.prototype.addSiteAccounts = function addSiteAccounts(siteId, credentials)
                 "credentialFields.enclosedType": "com.yodlee.common.FieldInfoSingle"
             };
 
-            if(credentials.length !== loginForm.componentList.length) {
+            loginForm.componentList.forEach(function(value, index){
 
-                deferred.reject('You have not provided enough login credentials. This site expects ' + 
-                    loginForm.componentList.length + ' login parameters.');
+                if(value.fieldInfoType === "com.yodlee.common.FieldInfoChoice") {
+                    value = value.fieldInfoList[0];
+                }
 
-            } else {
+                formObj["credentialFields[" + index + "].displayName"] = value.displayName;
+                formObj["credentialFields[" + index + "].fieldType.typeName"] = value.fieldType.typeName;
+                formObj["credentialFields[" + index + "].name"] = value.name;
+                formObj["credentialFields[" + index + "].size"] = value.size;
+                formObj["credentialFields[" + index + "].value"] = credentials[index];
+                formObj["credentialFields[" + index + "].valueIdentifier"] = value.valueIdentifier;
+                formObj["credentialFields[" + index + "].valueMask"] = value.valueMask;
+                formObj["credentialFields[" + index + "].isEditable"] = value.isEditable;
 
-                loginForm.componentList.forEach(function(value, index){
-                    formObj["credentialFields[" + index + "].displayName"] = value.displayName;
-                    formObj["credentialFields[" + index + "].fieldType.typeName"] = value.fieldType.typeName;
-                    formObj["credentialFields[" + index + "].name"] = value.name;
-                    formObj["credentialFields[" + index + "].size"] = value.size;
-                    formObj["credentialFields[" + index + "].value"] = credentials[index];
-                    formObj["credentialFields[" + index + "].valueIdentifier"] = value.valueIdentifier;
-                    formObj["credentialFields[" + index + "].valueMask"] = value.valueMask;
-                    formObj["credentialFields[" + index + "].isEditable"] = value.isEditable;
-                });
+            });
 
-                request.post({
-                    url: this.baseUrl + 'jsonsdk/SiteAccountManagement/addSiteAccount1',
-                    form: formObj
-                },
-                function(err, response, body) {
-                    if (err || JSON.parse(body).Error) {
-                        deferred.reject(err || JSON.parse(body).message);
-                    } else {
-                        deferred.resolve(JSON.parse(body));
-                    }
-                });
-
-            }
+            request.post({
+                url: this.baseUrl + 'jsonsdk/SiteAccountManagement/addSiteAccount1',
+                form: formObj
+            },
+            function(err, response, body) {
+                if (err || JSON.parse(body).Error) {
+                    deferred.reject(err || JSON.parse(body).message);
+                } else {
+                    deferred.resolve(JSON.parse(body));
+                }
+            });
 
         }.bind(this)).catch(function(err) {
             deferred.reject(err);
