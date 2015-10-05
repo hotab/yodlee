@@ -1,14 +1,13 @@
 {
-  "name": "yodlee",
-  "version": "1.0.5",
-  "description": "Yodlee API wrapper for Node.",
-  "homepage": "https://github.com/craigrich/yodlee",
+  "name": "yodlee-wrapper",
+  "version": "1.0.0",
+  "description": "Yodlee API wrapper for Node (forked from craigrich/yodlee).",
+  "homepage": "https://github.com/lewisbarber/yodlee",
   "author": {
-    "name": "Craig Richardson",
-    "email": "craig.rich@hotmail.co.uk",
-    "url": "craigrich.me"
+    "name": "Lewis Barber",
+    "email": "lewis_barber@hotmail.com"
   },
-  "repository": "craigrich/yodlee",
+  "repository": "lewisbarber/yodlee",
   "license": "MIT",
   "files": [
     "index.js"
