@@ -1240,4 +1240,66 @@ describe('yodlee node module', function() {
 
     });
 
+    describe('removeSiteAccount()', function() {
+    
+        before(function() {
+            bothSessionTokensStub = sinon.stub(yodlee, 'getBothSessionTokens');
+        });
+
+        beforeEach(function() {
+            bothSessionTokensStub.resolves({
+                cobSessionToken: '1234-5678',
+                userSessionToken: '1234-5678'
+            });
+        });
+
+        after(function() {
+            yodlee.getBothSessionTokens.restore();
+        });
+
+        it('should return an error when fails to fetch session keys', function(){
+
+            bothSessionTokensStub.rejects('Error');
+
+            return yodlee.removeSiteAccount(1387391).should.be.rejectedWith("Error");
+
+        });
+
+        it('should return an error when siteAccountId is not provided', function(){
+
+            bothSessionTokensStub.rejects('Error');
+
+            return yodlee.removeSiteAccount().should.be.rejectedWith("Cannot remove site accounts: Empty siteAccountId");
+
+        });
+        
+        it('should return an object when session keys are successfully retrieved', function(){
+
+            postStub.yields(null, null, JSON.stringify({
+                info: {}
+            }));
+
+            return yodlee.removeSiteAccount(1387391).should.eventually.be.a("object");
+
+        });
+        
+        it('should return an error on an invalid response from Request', function() {
+            postStub.yields('error', null, null);
+            return yodlee.removeSiteAccount(1387391).should.be.rejected;
+        });
+
+        it('should return an error on an invalid response from Yodlee API', function() {
+
+            postStub.yields(null, null, JSON.stringify({
+                Error: [{
+                    errorMessage: "Error"
+                }]
+            }));
+
+            return yodlee.removeSiteAccount(1387391).should.be.rejected;
+
+        });
+
+    });
+
 });
