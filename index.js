@@ -729,4 +729,42 @@ Yodlee.prototype.getItemSummariesForSite = function getItemSummariesForSite(site
 
 };
 
+/**
+ * Remove site accounts
+ * @param {number} siteAccountId args to delete Site accounts
+ */
+Yodlee.prototype.removeSiteAccount = function removeSiteAccount(siteAccountId) {
+
+    var deferred = Q.defer();
+
+    if (!siteAccountId) {
+        deferred.reject('Cannot remove site accounts: Empty siteAccountId');
+    }
+
+    this.getBothSessionTokens().then(function(tokens) {
+
+        request.post({
+            url: this.baseUrl + 'jsonsdk/SiteAccountManagement/removeSiteAccount',
+            form: {
+                'cobSessionToken': tokens.cobSessionToken,
+                'userSessionToken': tokens.userSessionToken,
+                'memSiteAccId': siteAccountId
+            }
+        },
+        function(err, response, body) {
+            if (err || JSON.parse(body).Error) {
+                deferred.reject(err || JSON.parse(body).message);
+            } else {
+                deferred.resolve(JSON.parse(body));
+            }
+        });
+
+    }.bind(this)).catch(function(e) {
+        deferred.reject(e);
+    });
+
+    return deferred.promise;
+
+};
+
 module.exports = Yodlee();
