@@ -692,6 +692,49 @@ Yodlee.prototype.getSiteInfo = function getSiteInfo(siteId) {
 };
 
 /**
+ * Get Site account
+ * @param {number} siteAccountIds args to get Site info
+ */
+Yodlee.prototype.getSiteAccounts = function getSiteAccounts(siteAccountIds) {
+
+    var deferred = Q.defer();
+
+    if (!siteAccountIds) {
+        deferred.reject('Cannot get site accounts: Empty siteAccountIds');
+    }
+
+    var formParams = {
+        'cobSessionToken': tokens.cobSessionToken,
+        'userSessionToken': tokens.userSessionToken
+    };
+
+    siteAccountIds.forEach(function(siteAccountId, index){
+        formParams['memSiteAccIds[' + index + ']'] = siteAccountId;
+    });
+
+    this.getBothSessionTokens().then(function(tokens) {
+
+        request.post({
+            url: this.baseUrl + 'jsonsdk/SiteAccountManagement/getSiteAccounts',
+            form: formParams
+        },
+        function(err, response, body) {
+            if (err || JSON.parse(body).Error) {
+                deferred.reject(err || JSON.parse(body).message);
+            } else {
+                deferred.resolve(JSON.parse(body));
+            }
+        });
+
+    }.bind(this)).catch(function(e) {
+        deferred.reject(e);
+    });
+
+    return deferred.promise;
+
+};
+
+/**
  * Get item summaries for site account
  * @param {number} siteAccountId args to get Site account item summaries
  */
