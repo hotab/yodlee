@@ -703,22 +703,25 @@ Yodlee.prototype.getSiteAccounts = function getSiteAccounts(siteAccountIds) {
         deferred.reject('Cannot get site accounts: Empty siteAccountIds');
     }
 
-    var formParams = {
-        'cobSessionToken': tokens.cobSessionToken,
-        'userSessionToken': tokens.userSessionToken
-    };
-
-    siteAccountIds.forEach(function(siteAccountId, index){
-        formParams['memSiteAccIds[' + index + ']'] = siteAccountId;
-    });
-
     this.getBothSessionTokens().then(function(tokens) {
+
+        var formParams = {
+            'cobSessionToken': tokens.cobSessionToken,
+            'userSessionToken': tokens.userSessionToken
+        };
+
+        siteAccountIds.forEach(function(siteAccountId, index){
+            console.log(siteAccountId)
+            formParams['memSiteAccIds[' + index + ']'] = siteAccountId;
+        });
 
         request.post({
             url: this.baseUrl + 'jsonsdk/SiteAccountManagement/getSiteAccounts',
             form: formParams
         },
         function(err, response, body) {
+            console.log(err);
+            console.log(body);
             if (err || JSON.parse(body).Error) {
                 deferred.reject(err || JSON.parse(body).message);
             } else {
