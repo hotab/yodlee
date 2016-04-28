@@ -100,7 +100,7 @@ Yodlee.prototype.use = function use(opt) {
     } else if(!opt.cobSessionToken && !opt.userSessionToken && !opt.cobSessionExpires && !opt.userSessionExpires) {
 
         // cobLogin only required when tokens are not provided
-        this.cobLogin().then(function(){ 
+        this.cobLogin().then(function(){
             deferred.resolve(this.sessionTokens);
         }.bind(this)).catch(function(e){
             deferred.reject(e);
@@ -140,7 +140,7 @@ Yodlee.prototype.cobLogin = function cobLogin() {
         if (err || JSON.parse(body).Error) {
             deferred.reject(err || JSON.parse(body).Error[0].errorDetail);
         } else {
-            
+
             var expires = new Date();
 
             this.sessionTokens.cobSessionToken.token = JSON.parse(body).cobrandConversationCredentials.sessionToken;
@@ -321,7 +321,7 @@ Yodlee.prototype.executeUserSearch = function executeUserSearch(opt) {
     opt = opt || {};
 
     this.getBothSessionTokens().then(function(tokens) {
-            
+
         request.post({
             url: this.baseUrl + 'jsonsdk/TransactionSearchService/executeUserSearchRequest',
             form: {
@@ -367,7 +367,7 @@ Yodlee.prototype.getUserTransactions = function getUserTransactions(opt) {
     }
 
     this.getBothSessionTokens().then(function(tokens) {
-            
+
         request.post({
             url: this.baseUrl + 'jsonsdk/TransactionSearchService/getUserTransactions',
             form: {
@@ -444,7 +444,7 @@ Yodlee.prototype.register = function register(opt) {
     opt = opt || {};
 
     if (!opt.username || !opt.password || !opt.emailAddress) {
-        deferred.reject('Cannot register user: Empty ' + (!(opt.username) ? 'username' : 
+        deferred.reject('Cannot register user: Empty ' + (!(opt.username) ? 'username' :
             (!(opt.password) ? 'password' : 'emailAddress')));
     }
 
@@ -605,7 +605,7 @@ Yodlee.prototype.addSiteAccounts = function addSiteAccounts(siteId, credentials)
             siteId: siteId
         }).then(function(loginForm) {
 
-            var formObj = { 
+            var formObj = {
                 cobSessionToken: tokens.cobSessionToken,
                 userSessionToken: tokens.userSessionToken,
                 siteId: siteId,
@@ -711,7 +711,6 @@ Yodlee.prototype.getSiteAccounts = function getSiteAccounts(siteAccountIds) {
         };
 
         siteAccountIds.forEach(function(siteAccountId, index){
-            console.log(siteAccountId)
             formParams['memSiteAccIds[' + index + ']'] = siteAccountId;
         });
 
@@ -720,8 +719,6 @@ Yodlee.prototype.getSiteAccounts = function getSiteAccounts(siteAccountIds) {
             form: formParams
         },
         function(err, response, body) {
-            console.log(err);
-            console.log(body);
             if (err || JSON.parse(body).Error) {
                 deferred.reject(err || JSON.parse(body).message);
             } else {
@@ -810,7 +807,95 @@ Yodlee.prototype.removeSiteAccount = function removeSiteAccount(siteAccountId) {
     });
 
     return deferred.promise;
+};
 
+Yodlee.prototype.accountSummaryAll = function accountSummaryAll() {
+    var deferred = Q.defer();
+
+    this.getBothSessionTokens().then(function(tokens) {
+        request.post({
+            url: this.baseUrl + 'account/summary/all',
+            form: {
+                'cobSessionToken': tokens.cobSessionToken,
+                'userSessionToken': tokens.userSessionToken
+            }
+        },
+        function(error, response, body) {
+            if(error || JSON.parse(body).Error) {
+                deferred.reject(error || JSON.parse(body));
+            } else {
+                deferred.resolve(JSON.parse(body));
+            }
+        });
+
+    }.bind(this)).catch(function(e) {
+        deferred.reject(e);
+    });
+
+    return deferred.promise;
+};
+
+Yodlee.prototype.activateItemAccount = function activateItemAccount(itemAccountId) {
+    //jsonsdk/ItemAccountManagement/deactivateItemAccount
+    var deferred = Q.defer();
+
+    if (!itemAccountId) {
+        deferred.reject('Cannot activate item account: Empty itemAccountId');
+    }
+
+    this.getBothSessionTokens().then(function(tokens) {
+        request.post({
+                url: this.baseUrl + 'jsonsdk/ItemAccountManagement/activateItemAccount',
+                form: {
+                    'cobSessionToken': tokens.cobSessionToken,
+                    'userSessionToken': tokens.userSessionToken,
+                    'itemAccountId': itemAccountId
+                }
+            },
+            function(error, response, body) {
+                if(error || JSON.parse(body).Error) {
+                    deferred.reject(error || JSON.parse(body));
+                } else {
+                    deferred.resolve(JSON.parse(body));
+                }
+            });
+
+    }.bind(this)).catch(function(e) {
+        deferred.reject(e);
+    });
+
+    return deferred.promise;
+};
+
+Yodlee.prototype.deactivateItemAccount = function activateItemAccount(itemAccountId) {
+    var deferred = Q.defer();
+
+    if (!itemAccountId) {
+        deferred.reject('Cannot deactivate item account: Empty itemAccountId');
+    }
+
+    this.getBothSessionTokens().then(function(tokens) {
+        request.post({
+                url: this.baseUrl + 'jsonsdk/ItemAccountManagement/deactivateItemAccount',
+                form: {
+                    'cobSessionToken': tokens.cobSessionToken,
+                    'userSessionToken': tokens.userSessionToken,
+                    'itemAccountId': itemAccountId
+                }
+            },
+            function(error, response, body) {
+                if(error || JSON.parse(body).Error) {
+                    deferred.reject(error || JSON.parse(body));
+                } else {
+                    deferred.resolve(JSON.parse(body));
+                }
+            });
+
+    }.bind(this)).catch(function(e) {
+        deferred.reject(e);
+    });
+
+    return deferred.promise;
 };
 
 module.exports = Yodlee();

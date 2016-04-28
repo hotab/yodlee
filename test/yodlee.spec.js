@@ -84,7 +84,7 @@ describe('yodlee node module', function() {
         });
 
         it('Should set sandbox to false and baseUrl to liveUrl - empty sandbox state', function() {
-            
+
             yodlee.use({
                 username: 'sbCobExampleUser',
                 password: '96d621ec-2323-4664-b2fa-17ba6796b116'
@@ -170,7 +170,7 @@ describe('yodlee node module', function() {
                 }
             }));
         });
-        
+
         it('should return an error with missing username', function() {
 
             yodlee.username = null;
@@ -181,7 +181,7 @@ describe('yodlee node module', function() {
                     .be.rejectedWith("Invalid Cobrand Login: Empty username");
 
         });
-        
+
         it('should return an error with missing password', function() {
 
             yodlee.username = "sandboxuser";
@@ -193,7 +193,7 @@ describe('yodlee node module', function() {
                     .be.rejectedWith("Invalid Cobrand Login: Empty password");
 
         });
-        
+
         it('Should set cobSessionToken and cobSessionExpires', function() {
 
             yodlee.username = "sandboxuser";
@@ -287,7 +287,7 @@ describe('yodlee node module', function() {
         });
 
         it('should return an error when getCobSessionToken fails', function() {
-            
+
             cobSessionTokenStub.rejects('Error');
 
             return yodlee.login({
@@ -319,11 +319,11 @@ describe('yodlee node module', function() {
             }).should.be.rejected;
 
         });
-        
+
     });
 
     describe('getCobSessionToken()', function() {
-        
+
         before(function() {
             cobLoginStub = sinon.stub(yodlee, 'cobLogin');
         });
@@ -344,7 +344,7 @@ describe('yodlee node module', function() {
             return state;
 
         });
-        
+
         it('should return session token from cobLogin when not set', function(){
 
             cobLoginStub.resolves({
@@ -359,7 +359,7 @@ describe('yodlee node module', function() {
             return yodlee.getCobSessionToken().should.eventually.be.a("string");
 
         });
-        
+
         it('should return session token from cobLogin when expired', function(){
 
             yodlee.sessionTokens.cobSessionToken.token = "1234-8888";
@@ -368,7 +368,7 @@ describe('yodlee node module', function() {
             return yodlee.getCobSessionToken().should.eventually.be.a("string");
 
         });
-        
+
         it('should return an error when cobLogin fails and session token not set', function(){
 
             cobLoginStub.rejects('Error');
@@ -383,7 +383,7 @@ describe('yodlee node module', function() {
     });
 
     describe('getUserSessionToken()', function() {
-        
+
         before(function() {
             loginStub = sinon.stub(yodlee, 'login');
         });
@@ -404,7 +404,7 @@ describe('yodlee node module', function() {
             return state;
 
         });
-        
+
         it('should return session token from login when not set', function(){
 
             loginStub.resolves({
@@ -424,7 +424,7 @@ describe('yodlee node module', function() {
             }).should.eventually.be.a("string");
 
         });
-        
+
         it('should return session token from login when expired', function(){
 
             yodlee.sessionTokens.userSessionToken.token = "1234-8888";
@@ -433,10 +433,10 @@ describe('yodlee node module', function() {
             return yodlee.getUserSessionToken({
                 username: 'sandboxuser',
                 password: 'password@123'
-            }).should.eventually.be.a("string"); 
+            }).should.eventually.be.a("string");
 
         });
-        
+
         it('should return an error when login fails and session token not set', function(){
 
             loginStub.rejects('Error');
@@ -450,7 +450,7 @@ describe('yodlee node module', function() {
             }).should.eventually.be.rejected;
 
         });
-        
+
         it('should return an error when username not provided and login required', function(){
 
             yodlee.sessionTokens.userSessionToken.token = null;
@@ -462,7 +462,7 @@ describe('yodlee node module', function() {
             }).should.eventually.be.rejectedWith("User Session expired, user credentials required: Empty username");
 
         });
-        
+
         it('should return an error when password not provided and login required', function(){
 
             yodlee.sessionTokens.userSessionToken.token = null;
@@ -474,7 +474,7 @@ describe('yodlee node module', function() {
             }).should.eventually.be.rejectedWith("User Session expired, user credentials required: Empty password");
 
         });
-        
+
     });
 
     describe('getBothSessionTokens()', function() {
@@ -493,16 +493,16 @@ describe('yodlee node module', function() {
             yodlee.getCobSessionToken.restore();
             yodlee.getUserSessionToken.restore();
         });
-        
+
         it('should return both session tokens as objects', function(){
             return yodlee.getBothSessionTokens().should.eventually.be.a("object");
         });
-        
+
         it('should return an error when getCobSessionToken fails', function(){
             cobSessionTokenStub.rejects('Error');
             return yodlee.getBothSessionTokens().should.eventually.be.rejected;
         });
-        
+
         it('should return an error when getUserSessionToken fails', function(){
             userSessionTokenStub.rejects('Error');
             return yodlee.getBothSessionTokens().should.eventually.be.rejected;
@@ -526,7 +526,7 @@ describe('yodlee node module', function() {
         after(function() {
             yodlee.getBothSessionTokens.restore();
         });
-        
+
         it('should return an error when fails to fetch session keys', function(){
 
             bothSessionTokensStub.rejects('Error');
@@ -534,7 +534,7 @@ describe('yodlee node module', function() {
             return yodlee.getAllSiteAccounts().should.be.rejectedWith("Error");
 
         });
-        
+
         it('should return all site accounts when session keys are successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({
@@ -544,7 +544,7 @@ describe('yodlee node module', function() {
             return yodlee.getAllSiteAccounts().should.eventually.be.a("object");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.getAllSiteAccounts().should.be.rejected;
@@ -580,7 +580,7 @@ describe('yodlee node module', function() {
         after(function() {
             yodlee.getBothSessionTokens.restore();
         });
-        
+
         it('should return an error when fails to fetch session keys', function(){
 
             bothSessionTokensStub.rejects('Error');
@@ -588,7 +588,7 @@ describe('yodlee node module', function() {
             return yodlee.executeUserSearch().should.be.rejectedWith("Error");
 
         });
-        
+
         it('should return user search when session keys are successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({
@@ -598,7 +598,7 @@ describe('yodlee node module', function() {
             return yodlee.executeUserSearch().should.eventually.be.a("object");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.executeUserSearch().should.be.rejected;
@@ -634,7 +634,7 @@ describe('yodlee node module', function() {
         after(function() {
             yodlee.getBothSessionTokens.restore();
         });
-        
+
         it('should return an error when fails to fetch session keys', function(){
 
             bothSessionTokensStub.rejects('Error');
@@ -644,7 +644,7 @@ describe('yodlee node module', function() {
             }).should.be.rejectedWith("Error");
 
         });
-        
+
         it('should return an error when search identifier is missing', function(){
 
             postStub.yields(null, null, JSON.stringify({
@@ -654,7 +654,7 @@ describe('yodlee node module', function() {
             return yodlee.getUserTransactions().should.be.rejectedWith("Invalid Search Identifier: Empty!");
 
         });
-        
+
         it('should return transactions when session keys are successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({
@@ -666,7 +666,7 @@ describe('yodlee node module', function() {
             }).should.eventually.be.a("object");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.getUserTransactions({
@@ -691,7 +691,7 @@ describe('yodlee node module', function() {
     });
 
     describe('getSiteLoginForm()', function() {
-        
+
         before(function() {
             cobSessionTokenStub = sinon.stub(yodlee, 'getCobSessionToken');
         });
@@ -713,7 +713,7 @@ describe('yodlee node module', function() {
             }).should.be.rejectedWith("Error");
 
         });
-        
+
         it('should return login form when cob session key is successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({
@@ -731,14 +731,14 @@ describe('yodlee node module', function() {
             return yodlee.getSiteLoginForm().should.be.rejectedWith("Invalid Site ID: Empty!");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.getSiteLoginForm({
                 siteId: 123
             }).should.be.rejected;
         });
-        
+
         it('should return an error on an invalid response from Yodlee API', function() {
 
             postStub.yields(null, null, JSON.stringify({
@@ -756,7 +756,7 @@ describe('yodlee node module', function() {
     });
 
     describe('register()', function() {
-        
+
         before(function() {
             cobSessionTokenStub = sinon.stub(yodlee, 'getCobSessionToken');
         });
@@ -780,7 +780,7 @@ describe('yodlee node module', function() {
             }).should.be.rejectedWith("Error");
 
         });
-        
+
         it('should return an error when username is empty', function(){
 
             return yodlee.register({
@@ -790,7 +790,7 @@ describe('yodlee node module', function() {
             }).should.be.rejectedWith("Cannot register user: Empty username");
 
         });
-        
+
         it('should return an error when password is empty', function(){
 
             return yodlee.register({
@@ -800,7 +800,7 @@ describe('yodlee node module', function() {
             }).should.be.rejectedWith("Cannot register user: Empty password");
 
         });
-        
+
         it('should return an error when emailAddress is empty', function(){
 
             return yodlee.register({
@@ -810,7 +810,7 @@ describe('yodlee node module', function() {
             }).should.be.rejectedWith("Cannot register user: Empty emailAddress");
 
         });
-        
+
         it('should return registration object when cob session key is successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({ }));
@@ -822,7 +822,7 @@ describe('yodlee node module', function() {
             }).should.eventually.be.a("object");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.register({
@@ -831,7 +831,7 @@ describe('yodlee node module', function() {
                 emailAddress: 'email@domain.com'
             }).should.be.rejected;
         });
-        
+
         it('should return an error on an invalid response from Yodlee API', function() {
 
             postStub.yields(null, null, JSON.stringify({
@@ -851,7 +851,7 @@ describe('yodlee node module', function() {
     });
 
     describe('searchSite()', function() {
-        
+
         before(function() {
             bothSessionTokensStub = sinon.stub(yodlee, 'getBothSessionTokens');
         });
@@ -882,7 +882,7 @@ describe('yodlee node module', function() {
             return yodlee.searchSite().should.be.rejectedWith("Cannot search for sites with empty searchTerm");
 
         });
-        
+
         it('should return sites when session keys are successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({
@@ -892,7 +892,7 @@ describe('yodlee node module', function() {
             return yodlee.searchSite("halifax").should.eventually.be.a("object");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.searchSite("halifax").should.be.rejected;
@@ -913,7 +913,7 @@ describe('yodlee node module', function() {
     });
 
     describe('unregister()', function() {
-    
+
         before(function() {
             bothSessionTokensStub = sinon.stub(yodlee, 'getBothSessionTokens');
         });
@@ -936,7 +936,7 @@ describe('yodlee node module', function() {
             return yodlee.unregister().should.be.rejectedWith("Error");
 
         });
-        
+
         it('should return an object when session keys are successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({ }));
@@ -944,7 +944,7 @@ describe('yodlee node module', function() {
             return yodlee.unregister().should.eventually.be.a("object");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.unregister().should.be.rejected;
@@ -965,7 +965,7 @@ describe('yodlee node module', function() {
     });
 
     describe('validateUser()', function() {
-    
+
         before(function() {
             cobSessionTokenStub = sinon.stub(yodlee, 'getCobSessionToken');
         });
@@ -993,7 +993,7 @@ describe('yodlee node module', function() {
             return yodlee.validateUser().should.be.rejectedWith("Cannot validate user: Empty username");
 
         });
-        
+
         it('should return user info when session key is successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({
@@ -1003,7 +1003,7 @@ describe('yodlee node module', function() {
             return yodlee.validateUser("user123").should.eventually.be.a("object");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.validateUser("user123").should.be.rejected;
@@ -1020,11 +1020,11 @@ describe('yodlee node module', function() {
             return yodlee.validateUser("user123").should.be.rejected;
 
         });
-    
+
     });
 
     describe('addSiteAccounts()', function() {
-    
+
         var formItem = {
             displayName: 'TBC',
             fieldType: { typeName: 'TBC' },
@@ -1089,7 +1089,7 @@ describe('yodlee node module', function() {
             return yodlee.addSiteAccounts(3970, ["username", "password"]).should.be.rejected;
 
         });
-        
+
         it('should return an object when session keys are successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({
@@ -1099,7 +1099,7 @@ describe('yodlee node module', function() {
             return yodlee.addSiteAccounts(3970, ["username", "password"]).should.eventually.be.a("object");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.addSiteAccounts(3970, ["username", "password"]).should.be.rejected;
@@ -1120,7 +1120,7 @@ describe('yodlee node module', function() {
     });
 
     describe('getSiteInfo()', function() {
-    
+
         before(function() {
             cobSessionTokenStub = sinon.stub(yodlee, 'getCobSessionToken');
         });
@@ -1148,7 +1148,7 @@ describe('yodlee node module', function() {
             return yodlee.getSiteInfo().should.be.rejectedWith("Cannot get site: Empty siteId");
 
         });
-        
+
         it('should return user info when session key is successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({
@@ -1158,7 +1158,7 @@ describe('yodlee node module', function() {
             return yodlee.getSiteInfo(3970).should.eventually.be.a("object");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.getSiteInfo(3970).should.be.rejected;
@@ -1179,7 +1179,7 @@ describe('yodlee node module', function() {
     });
 
     describe('getItemSummariesForSite()', function() {
-    
+
         before(function() {
             bothSessionTokensStub = sinon.stub(yodlee, 'getBothSessionTokens');
         });
@@ -1210,7 +1210,7 @@ describe('yodlee node module', function() {
             return yodlee.getItemSummariesForSite().should.be.rejectedWith("Cannot get site: Empty siteAccountId");
 
         });
-        
+
         it('should return an object when session keys are successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({
@@ -1220,7 +1220,7 @@ describe('yodlee node module', function() {
             return yodlee.getItemSummariesForSite(1387391).should.eventually.be.a("object");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.getItemSummariesForSite(1387391).should.be.rejected;
@@ -1240,8 +1240,177 @@ describe('yodlee node module', function() {
 
     });
 
+    describe("accountSummaryAll()", function() {
+        before(function() {
+            bothSessionTokensStub = sinon.stub(yodlee, 'getBothSessionTokens');
+        });
+
+        beforeEach(function() {
+            bothSessionTokensStub.resolves({
+                cobSessionToken: '1234-5678',
+                userSessionToken: '1234-5678'
+            });
+        });
+
+        after(function() {
+            yodlee.getBothSessionTokens.restore();
+        });
+
+        it('should return an error when fails to fetch session keys', function(){
+
+            bothSessionTokensStub.rejects('Error');
+
+            return yodlee.accountSummaryAll().should.be.rejectedWith("Error");
+
+        });
+
+        it('should return an object when session keys are successfully retrieved', function(){
+
+            postStub.yields(null, null, JSON.stringify({
+                info: {}
+            }));
+
+            return yodlee.accountSummaryAll().should.eventually.be.a("object");
+
+        });
+
+        it('should return an error on an invalid response from Request', function() {
+            postStub.yields('error', null, null);
+            return yodlee.accountSummaryAll().should.be.rejected;
+        });
+
+        it('should return an error on an invalid response from Yodlee API', function() {
+
+            postStub.yields(null, null, JSON.stringify({
+                Error: [{
+                    errorMessage: "Error"
+                }]
+            }));
+
+            return yodlee.accountSummaryAll().should.be.rejected;
+        });
+    });
+
+    describe("activateItemAccount()", function() {
+        before(function() {
+            bothSessionTokensStub = sinon.stub(yodlee, 'getBothSessionTokens');
+        });
+
+        beforeEach(function() {
+            bothSessionTokensStub.resolves({
+                cobSessionToken: '1234-5678',
+                userSessionToken: '1234-5678'
+            });
+        });
+
+        after(function() {
+            yodlee.getBothSessionTokens.restore();
+        });
+
+        it('should return an error when fails to fetch session keys', function(){
+
+            bothSessionTokensStub.rejects('Error');
+
+            return yodlee.activateItemAccount(81234679).should.be.rejectedWith("Error");
+
+        });
+
+        it('should return an object when session keys are successfully retrieved', function(){
+
+            postStub.yields(null, null, JSON.stringify({
+                info: {}
+            }));
+
+            return yodlee.activateItemAccount(81234679).should.eventually.be.a("object");
+
+        });
+
+        it('should return an error when itemAccountId is not provided', function(){
+
+            bothSessionTokensStub.rejects('Error');
+
+            return yodlee.activateItemAccount().should.be.rejectedWith("Cannot activate item account: Empty itemAccountId");
+
+        });
+
+        it('should return an error on an invalid response from Request', function() {
+            postStub.yields('error', null, null);
+            return yodlee.activateItemAccount(81234679).should.be.rejected;
+        });
+
+        it('should return an error on an invalid response from Yodlee API', function() {
+
+            postStub.yields(null, null, JSON.stringify({
+                Error: [{
+                    errorMessage: "Error"
+                }]
+            }));
+
+            return yodlee.activateItemAccount(81234679).should.be.rejected;
+        });
+    });
+
+    describe("deactivateItemAccount()", function() {
+        before(function() {
+            bothSessionTokensStub = sinon.stub(yodlee, 'getBothSessionTokens');
+        });
+
+        beforeEach(function() {
+            bothSessionTokensStub.resolves({
+                cobSessionToken: '1234-5678',
+                userSessionToken: '1234-5678'
+            });
+        });
+
+        after(function() {
+            yodlee.getBothSessionTokens.restore();
+        });
+
+        it('should return an error when fails to fetch session keys', function(){
+
+            bothSessionTokensStub.rejects('Error');
+
+            return yodlee.deactivateItemAccount(81234679).should.be.rejectedWith("Error");
+
+        });
+
+        it('should return an object when session keys are successfully retrieved', function(){
+
+            postStub.yields(null, null, JSON.stringify({
+                info: {}
+            }));
+
+            return yodlee.deactivateItemAccount(81234679).should.eventually.be.a("object");
+
+        });
+
+        it('should return an error when itemAccountId is not provided', function(){
+
+            bothSessionTokensStub.rejects('Error');
+
+            return yodlee.deactivateItemAccount().should.be.rejectedWith("Cannot deactivate item account: Empty itemAccountId");
+
+        });
+
+        it('should return an error on an invalid response from Request', function() {
+            postStub.yields('error', null, null);
+            return yodlee.deactivateItemAccount(81234679).should.be.rejected;
+        });
+
+        it('should return an error on an invalid response from Yodlee API', function() {
+
+            postStub.yields(null, null, JSON.stringify({
+                Error: [{
+                    errorMessage: "Error"
+                }]
+            }));
+
+            return yodlee.activateItemAccount(81234679).should.be.rejected;
+        });
+    });
+
     describe('removeSiteAccount()', function() {
-    
+
         before(function() {
             bothSessionTokensStub = sinon.stub(yodlee, 'getBothSessionTokens');
         });
@@ -1272,7 +1441,7 @@ describe('yodlee node module', function() {
             return yodlee.removeSiteAccount().should.be.rejectedWith("Cannot remove site accounts: Empty siteAccountId");
 
         });
-        
+
         it('should return an object when session keys are successfully retrieved', function(){
 
             postStub.yields(null, null, JSON.stringify({
@@ -1282,7 +1451,7 @@ describe('yodlee node module', function() {
             return yodlee.removeSiteAccount(1387391).should.eventually.be.a("object");
 
         });
-        
+
         it('should return an error on an invalid response from Request', function() {
             postStub.yields('error', null, null);
             return yodlee.removeSiteAccount(1387391).should.be.rejected;
