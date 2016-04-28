@@ -38,6 +38,20 @@ function Yodlee() {
 }
 
 /**
+ * FastLink Url
+ * @private
+ */
+
+Yodlee.prototype.fastLinkUrl = "https://node.developer.yodlee.com/authenticate/restserver/";
+
+/**
+ * Default FinAppId
+ * @private
+ */
+
+Yodlee.prototype.finAppIdAggregation = 10003600;
+
+/**
 * Base URL for sandbox
 * @private
 */
@@ -809,6 +823,10 @@ Yodlee.prototype.removeSiteAccount = function removeSiteAccount(siteAccountId) {
     return deferred.promise;
 };
 
+/**
+ * Get all accounts
+ */
+
 Yodlee.prototype.accountSummaryAll = function accountSummaryAll() {
     var deferred = Q.defer();
 
@@ -834,6 +852,11 @@ Yodlee.prototype.accountSummaryAll = function accountSummaryAll() {
 
     return deferred.promise;
 };
+
+/**
+ * Activate item account
+ * @param {number} itemAccountId args to activate Item account
+ */
 
 Yodlee.prototype.activateItemAccount = function activateItemAccount(itemAccountId) {
     //jsonsdk/ItemAccountManagement/deactivateItemAccount
@@ -867,6 +890,11 @@ Yodlee.prototype.activateItemAccount = function activateItemAccount(itemAccountI
     return deferred.promise;
 };
 
+/**
+ * Deactivate item account
+ * @param {number} itemAccountId args to deactivate Item account
+ */
+
 Yodlee.prototype.deactivateItemAccount = function activateItemAccount(itemAccountId) {
     var deferred = Q.defer();
 
@@ -898,4 +926,63 @@ Yodlee.prototype.deactivateItemAccount = function activateItemAccount(itemAccoun
     return deferred.promise;
 };
 
+/**
+ * The token as described here: https://developer.yodlee.com/Fastlink_2.0/FastLink_Integration_Guide_for_Web
+ * Section: Getting the token
+ * @param finAppId appId required to launch the token method
+ */
+
+Yodlee.prototype.getFastLinkToken = function getFastLinkToken(finAppId) {
+    //authenticator/token
+
+    var deferred = Q.defer();
+
+    if (!finAppId) {
+        finAppId = this.finAppIdAggregation; //Use default finAppId
+    }
+
+    this.getBothSessionTokens().then(function(tokens) {
+        request.post({
+                url: this.baseUrl + 'jsonsdk/ItemAccountManagement/deactivateItemAccount',
+                form: {
+                    'cobSessionToken': tokens.cobSessionToken,
+                    'userSessionToken': tokens.userSessionToken,
+                    'finAppId': finAppId
+                }
+            },
+            function(error, response, body) {
+                //TODO: see what the heck do we get in response, it might be something starting from a string ending with an XML object
+                if(error || JSON.parse(body).Error) {
+                    deferred.reject(error || JSON.parse(body));
+                } else {
+                    deferred.resolve(JSON.parse(body));
+                }
+            });
+
+    }.bind(this)).catch(function(e) {
+        deferred.reject(e);
+    });
+
+    return deferred.promise;
+};
+
+Yodlee.prototype.getFastLinkUrl = function getFastLinkUrl(cobAppName, params) {
+
+    return this.getFastLinkToken(params.app).then(function(token) {
+        var baseUrl = this.fastLinkUrl + "authenticate/";
+        baseUrl += cobAppName + "/";
+        if (!params.app) {
+            params.app = this.finAppIdAggregation;
+        }
+        baseUrl += "?app="+params.app;
+        //TODO: poll rsession (sessionToken)
+        baseUrl += "&token=" +token;
+        baseUrl += "&redirectReq="+params.redirectReq?"true":"false";
+        if(params.extraParams) {
+            baseUrl+="&extraParams='"+params.extraParams+"'";
+        }
+        return baseUrl;
+    }.bind(this));
+
+};
 module.exports = Yodlee();
