@@ -985,4 +985,5 @@ Yodlee.prototype.getFastLinkUrl = function getFastLinkUrl(cobAppName, params) {
     }.bind(this));
 
 };
-module.exports = Yodlee();
+
+module.exports = Yodlee;
