@@ -1,6 +1,6 @@
 {
   "name": "yodlee-wrapper",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Yodlee API wrapper for Node (forked from craigrich/yodlee).",
   "homepage": "https://github.com/lewisbarber/yodlee",
   "author": {
