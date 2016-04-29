@@ -967,7 +967,12 @@ Yodlee.prototype.getFastLinkToken = function getFastLinkToken(finAppId) {
 };
 
 Yodlee.prototype.getFastLinkUrl = function getFastLinkUrl(cobAppName, params) {
-
+    if(!params) {
+        params = {};
+    }
+    if (!params.app) {
+        params.app = this.finAppIdAggregation; //Use default finAppId
+    }
     return this.getFastLinkToken(params.app).then(function(token) {
         var baseUrl = this.fastLinkUrl + "authenticate/";
         baseUrl += cobAppName + "/";
@@ -983,7 +988,41 @@ Yodlee.prototype.getFastLinkUrl = function getFastLinkUrl(cobAppName, params) {
         }
         return baseUrl;
     }.bind(this));
+};
 
+Yodlee.prototype.updateEmail = function updateEmail(email) {
+    var deferred = Q.defer();
+
+    if (!email) {
+        deferred.reject('Cannot update email: Empty email');
+    }
+
+    this.getBothSessionTokens().then(function(tokens) {
+        request.post({
+                url: this.baseUrl + 'jsonsdk/ItemAccountManagement/deactivateItemAccount',
+                form: {
+                    'cobSessionToken': tokens.cobSessionToken,
+                    'userSessionToken': tokens.userSessionToken,
+                    'email.name':'EMAIL',
+                    'email.value':email,
+                    'email.objectInstanceType':'com.yodlee.common.FieldInfoSingle'
+                }
+            },
+            function(error, response, body) {
+                if(error) {
+                    deferred.reject(error);
+                    return;
+                }
+                if(response.status === 200) {
+                    deferred.resolve(true);
+                    return;
+                }
+                deferred.reject(JSON.parse(body).message);
+            });
+
+    }.bind(this)).catch(function(e) {
+        deferred.reject(e);
+    });
 };
 
 module.exports = Yodlee;

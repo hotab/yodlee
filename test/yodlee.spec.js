@@ -11,7 +11,7 @@ chai.should();
 describe('yodlee node module', function() {
 
     var request = require('request');
-    var yodlee = require('../');
+    var yodlee = require('../')();
 
     var postStub;
     var cobSessionTokenStub;
